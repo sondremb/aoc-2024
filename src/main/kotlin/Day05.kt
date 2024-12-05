@@ -2,9 +2,25 @@ import graph.Graph
 
 class Day05 : Day {
     override fun part1(input: List<String>): String {
-        val graph = Graph<Int>()
-        var isChecking = false
+        val (graph, updates) = parseInput(input)
         var total = 0
+        updates.forEach { pages ->
+            val subgraph = graph.subgraph(pages)
+            val sortIndex = subgraph
+                .topologicalSort()
+                .withIndex()
+                .associate { it.value.value to it.index }
+            if (pages.isSortedBy { sortIndex[it]!! }) {
+                total += pages.middle()
+            }
+        }
+        return total.toString()
+    }
+
+    fun parseInput(input: List<String>): Pair<Graph<Int>, List<List<Int>>> {
+        val graph = Graph<Int>()
+        val updates = mutableListOf<List<Int>>()
+        var isChecking = false
         for (line in input) {
             if (line.isEmpty()) {
                 isChecking = true
@@ -15,50 +31,23 @@ class Day05 : Day {
                 graph.addEdge(before, after)
             } else {
                 val numbers = line.split(",").map { it.trim().toInt() }
-                val subgraph = graph.subgraph(numbers)
-                val sortIndex = subgraph
-                    .topologicalSort()
-                    .withIndex()
-                    .associate { it.value.value to it.index }
-                if (isSorted(sortIndex, numbers)) {
-                    total += numbers.middle()
-                }
+                updates.add(numbers)
             }
         }
-        return total.toString()
-    }
-
-    fun isSorted(sortIndex: Map<Int, Int>, numbers: List<Int>): Boolean {
-        var prevIndex = -1
-        numbers.forEach {
-            val index = sortIndex[it]!!
-            when {
-                index < prevIndex -> return false
-                else -> prevIndex = index
-            }
-        }
-        return true
+        return Pair(graph, updates)
     }
 
     override fun part2(input: List<String>): String {
-        var isChecking = false
+        val (graph, updates) = parseInput(input)
         var total = 0
-        val graph = Graph<Int>()
-        input.forEach { line ->
-            if (line.isEmpty()) {
-                isChecking = true
-                return@forEach
-            }
-            if (!isChecking) {
-                val (before, after) = line.split("|").map { it.trim().toInt() }
-                graph.addEdge(before, after)
-            } else {
-                val numbers = line.split(",").map { it.trim().toInt() }
-                val subgraph = graph.subgraph(numbers)
-                val sortIndex = subgraph.topologicalSort().withIndex().associate { it.value.value to it.index }
-                if (!isSorted(sortIndex, numbers)) {
-                    total += numbers.sortedBy { sortIndex[it] }.middle()
-                }
+        updates.forEach { pages ->
+            val subgraph = graph.subgraph(pages)
+            val sortIndex = subgraph
+                .topologicalSort()
+                .withIndex()
+                .associate { it.value.value to it.index }
+            if (!pages.isSortedBy { sortIndex[it]!! }) {
+                total += pages.sortedBy { sortIndex[it] }.middle()
             }
         }
         return total.toString()
