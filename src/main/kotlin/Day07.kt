@@ -37,6 +37,9 @@ class Day07 : Day {
         if (index == input.numbers.size) {
             return value == input.target
         }
+        if (value > input.target) {
+            return false
+        }
         val number = input.numbers[index]
         return operators.any { isPossibleRec(input, it(value, number), index + 1, operators) }
     }
@@ -52,8 +55,6 @@ class Day07 : Day {
             numbers.split(" ").map(String::toLong)
         )
     }
-
-
 
     private data class Input(val target: Long, val numbers: List<Long>)
 }
