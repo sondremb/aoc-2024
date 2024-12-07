@@ -1,27 +1,6 @@
 import graph.Coordinate
 
 class Day06 : Day {
-
-    val characters = mapOf(
-        Flag.Empty.value to '.',
-        Flag.Up.value to '╵',
-        Flag.Right.value to '╶',
-        Flag.Down.value to '╷',
-        Flag.Left.value to '╴',
-        Flag.Wall.value to '█',
-        Flag.Up.value or Flag.Right.value to '└',
-        Flag.Right.value or Flag.Down.value to '┌',
-        Flag.Down.value or Flag.Left.value to '┐',
-        Flag.Left.value or Flag.Up.value to '┘',
-        Flag.Up.value or Flag.Down.value to '│',
-        Flag.Left.value or Flag.Right.value to '─',
-        Flag.Up.value or Flag.Right.value or Flag.Down.value to '├',
-        Flag.Right.value or Flag.Down.value or Flag.Left.value to '┬',
-        Flag.Down.value or Flag.Left.value or Flag.Up.value to '┤',
-        Flag.Left.value or Flag.Up.value or Flag.Right.value to '┴',
-        Flag.Up.value or Flag.Right.value or Flag.Left.value to '┼',
-    )
-
     enum class Flag(val value: Int) {
         Empty(0),
         Up(1),
@@ -37,7 +16,6 @@ class Day06 : Day {
         Coordinate.Down to Flag.Down,
         Coordinate.Left to Flag.Left
     )
-
 
     override fun part1(input: List<String>): String {
         var (grid, position) = parseInput(input)
@@ -155,42 +133,6 @@ class Day06 : Day {
                 position = newPosition
             }
         }
-    }
-
-    fun printGrid(grid: List<List<Int>>, position: Coordinate, direction: Coordinate) {
-        grid.forEachIndexed { r, row ->
-            row.forEachIndexed { c, cell ->
-                if (r == position.r && c == position.c) {
-                    print(
-                        when (direction) {
-                            Coordinate.Up -> '^'
-                            Coordinate.Right -> '>'
-                            Coordinate.Down -> 'v'
-                            Coordinate.Left -> '<'
-                            else -> throw IllegalArgumentException("Invalid direction $direction")
-                        }
-                    )
-                } else
-                    print(getCell(cell))
-            }
-            println()
-        }
-    }
-
-    fun getCell(value: Int): Char {
-        if (value == Flag.Wall.value) {
-            return '#'
-        }
-        val vertical = value.hasFlag(Flag.Up) || value.hasFlag(Flag.Down)
-        val horizontal = value.hasFlag(Flag.Left) || value.hasFlag(Flag.Right)
-        if (vertical && horizontal) {
-            return '┼'
-        } else if (vertical) {
-            return '│'
-        } else if (horizontal) {
-            return '─'
-        }
-        return '.'
     }
 
     fun Int.hasFlag(flag: Flag): Boolean {
