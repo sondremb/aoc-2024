@@ -69,14 +69,19 @@ class Day06 : Day {
 
     override fun part2(input: List<String>): String {
         val (grid, startPosition) = parseInput(input)
-        val originalGrid = grid.map { it.toMutableList() }.toMutableList()
         var position = startPosition
         // start by moving up
         var direction = Coordinate.Up
         var directionFlag = directionMap[direction]!!
         var count = 0
         grid[position] = directionFlag.value
-        val hasBeenChecked = grid.map { it.map { it.hasFlag(Flag.Wall) }.toMutableList() }.toMutableList()
+        val hasBeenChecked = grid
+            .map { row ->
+                row
+                    .map { it.hasFlag(Flag.Wall) }
+                    .toMutableList()
+            }
+            .toMutableList()
         while (true) {
             var newPosition = position + direction
             while (grid.has(newPosition) && grid[newPosition].hasFlag(Flag.Wall)) {
@@ -88,10 +93,10 @@ class Day06 : Day {
                 break
             }
             if (!hasBeenChecked[newPosition]) {
-                val gridCopy = originalGrid.map { it.toMutableList() }.toMutableList()
+                val gridCopy = grid.map { it.toMutableList() }.toMutableList()
                 gridCopy[newPosition] = Flag.Wall.value
                 hasBeenChecked[newPosition] = true
-                if (hasLoop(gridCopy, startPosition)) {
+                if (hasLoop(gridCopy, position, direction)) {
                     count++
                 }
             }
@@ -109,8 +114,12 @@ class Day06 : Day {
         return count.toString()
     }
 
-    private fun hasLoop(grid: MutableList<MutableList<Int>>, startPosition: Coordinate): Boolean {
-        var direction = Coordinate.Up
+    private fun hasLoop(
+        grid: MutableList<MutableList<Int>>,
+        startPosition: Coordinate,
+        startDirection: Coordinate
+    ): Boolean {
+        var direction = startDirection
         var directionFlag = directionMap[direction]!!
         var position = startPosition
         while (true) {
