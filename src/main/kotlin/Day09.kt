@@ -79,7 +79,6 @@ class Day09 : Day {
                     }
 
                     currentFile.id = null
-
                     break
                 }
                 currentEmpty = currentEmpty.next!!
