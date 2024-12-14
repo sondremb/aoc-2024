@@ -29,7 +29,7 @@ class Day11 : Day {
         return blink(number * 2024, times - 1, memo)
     }
 
-    fun parseInput(input: List<String>): List<Long> {
+    private fun parseInput(input: List<String>): List<Long> {
         return input.flatMap { line -> line.split(Utils.WhiteSpace).map { it.toLong() } }
     }
 

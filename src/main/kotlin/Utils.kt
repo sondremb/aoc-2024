@@ -18,3 +18,6 @@ operator fun <T>List<MutableList<T>>.set(coord: Coordinate, value: T) {
     this[coord.r][coord.c] = value
 }
 fun <T>List<List<T>>.has(Coord: Coordinate): Boolean = Coord.r in this.indices && Coord.c in this[Coord.r].indices
+fun <T>List<List<T>>.withCoord(): List<Pair<Coordinate, T>> = this.withIndex().flatMap { (r, row) ->
+    row.withIndex().map { (c, value) -> Coordinate(c, r) to value }
+}
